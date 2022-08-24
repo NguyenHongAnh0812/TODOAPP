@@ -1,0 +1,33 @@
+li{
+    display: flex;
+    justify-content: space-between;
+    height: 50px;
+    align-items: center;
+    margin: 10px;
+}
+.id {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    height: 100%;
+    width: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: red;
+}
+.name {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    height: 100%;
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: green;
+}
+.btn{
+    background-color: lightskyblue;
+    border: 1px solid lightblue;
+    border-radius: 3px;
+    align-items: center;
+    height: 100%;
+    
+}
