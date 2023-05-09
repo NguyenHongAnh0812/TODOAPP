@@ -1,9 +1,43 @@
 .app {
   padding: 20px;
   border: 5px solid #000;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  position: relative;
   border-radius: 20px;
   width: 1200px;
   margin: 0 auto;
   background-color: aquamarine;
-  height: 90vh;
+  height: 95vh;
+}
+.app1 {
+  padding: 20px;
+  border: 5px solid #000;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  position: relative;
+  border-radius: 20px;
+  width: 1200px;
+  margin: 0 auto;
+  background-color: aquamarine;
+  overflow: auto;
+  height: 85vh;
+}
+.btn1 {
+  position: absolute;
+  top : 0px;
+  right: 5px;
+  width: 10%;
+  padding: 5.5px;
+  margin-bottom: 7px;
+}
+.title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  font-weight: 600;
+  padding: 30px;
 }

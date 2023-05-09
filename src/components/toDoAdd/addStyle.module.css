@@ -5,7 +5,14 @@
     padding-bottom: 20px;
     border-bottom: 2px solid #b5b5b5;
 }
-
+.title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    font-weight: 600;
+    padding: 30px;
+}
 .name {
     font-size: 1.6rem;
     font-weight: 600;
@@ -20,5 +27,14 @@
 
 .btn {
     width: 10%;
-    padding: 20px;
+    padding: 5.5px;
+    margin-bottom: 7px;
+}
+.btn1 {
+    position: absolute;
+    top : 0px;
+    right: 5px;
+    width: 10%;
+    padding: 5.5px;
+    margin-bottom: 7px;
 }

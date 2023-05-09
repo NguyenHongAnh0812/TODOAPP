@@ -1,8 +1,12 @@
 import { useEffect, useState, axios } from 'react';
 import ToDoAdd from './components/toDoAdd';
 import ToDoList from './components/toDoList/index';
+import Login from './components/login/index';
+import Register from './components/register/index';
+import { Route, Routes,useNavigate } from "react-router-dom";
 import "./App.css"
 function App() {
+  const navigate = useNavigate();
   const obj = [];
   const axios = require('axios').default;
   useEffect(() => {
@@ -65,14 +69,29 @@ function App() {
     )
 
   }
-
+  const handleSubmit1 = (e) => {
+    navigate('/')
+};
   return (
-    <div className='app'>
-      <ToDoAdd key={list.id} Add={Add} />
-      <ToDoList key={list.id} list={list} Delete={Delete} completeItem={completeItem} updateList={updateList} />
-    </div>
+    <>
+       <Routes >
+        <Route path ="/" element = {<Login />} />
+        <Route path ="/register" element = {<Register />} />
+        <Route path ="/homeAdmin" element = { 
+        <div className='app'>
+          <ToDoAdd key={list.id} Add={Add} />
+          <ToDoList key={list.id} list={list} Delete={Delete} completeItem={completeItem} updateList={updateList} />
+        </div>} />
+        <Route path ="/homeUser" element = { 
+        <div className='app1'>
+          <p className='title'>Bạn đăng đăng nhập với tư cách là User</p>
+          <button className='btn1' onClick={handleSubmit1} >Logout</button>
+          <ToDoList key={list.id} list={list} Delete={Delete} completeItem={completeItem} updateList={updateList} />
+        </div>} />
+      </Routes>  
+    </>
 
-  )
+  );
 }
 
 export default App;
