@@ -2,7 +2,9 @@ import { useRef, useState, useEffect, useContext,axios } from 'react';
 import loginStyle from "./loginStyle.module.css"
 import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
-const Login = () => {
+import CryptoJS from 'crypto-js';
+const Login = (props) => {
+    let {accout} = props;
     const navigate = useNavigate();
     const userRef = useRef();
     const errRef = useRef();
@@ -18,18 +20,41 @@ const Login = () => {
     useEffect(() => {
         setErrMsg('');
     }, [user, pwd])
-
+    const obj = [];
+    const axios = require('axios').default;
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(user=='Anh08122002' && pwd=='24052002@Phuonn')
-            navigate('/homeAdmin');
-            if(user=='Anh08122002test' && pwd=='24052002@Phuonn')
-            navigate('/homeUser');
-      
-    }
-    const handleCaptchaVerify = async (e) => {
-        e.preventDefault();
-      setIsVerified(true)
+        let check =1
+        for(let i=0;i<accout.length;i++)
+            {
+                console.log(pwd)
+                const password = pwd;
+                const salt = 'a1b2c3d4'; // salt ngẫu nhiên
+                const pepper = 'e5f6g7h8'; // pepper bí mật
+
+                const saltedPassword = password + salt;
+                const pepperedSaltedPassword = saltedPassword + pepper;
+
+                const hash = CryptoJS.SHA256(pepperedSaltedPassword).toString();
+
+                if(user==accout[i].user && hash==accout[i].password && accout[i].role =='user')
+                {
+                    navigate('/homeUser');
+                    check=0
+                    alert("Đăng nhập thành công")
+                }
+                    
+                if(user==accout[i].user && hash==accout[i].password && accout[i].role =='admin')
+                {
+                    navigate('/homeAdmin');
+                    check=0
+                    alert("Đăng nhập thành công")
+                }
+            }
+        if(check==1)
+        {
+            alert("Sai tài khoản hoặc mặt khẩu")
+        }
       
     }
     return (
@@ -66,12 +91,12 @@ const Login = () => {
                             value={pwd}
                             required
                         />
-                        <ReCAPTCHA
+                        {/* <ReCAPTCHA
                             sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                             onChange={handleCaptchaVerify}
                             // onExpired={this.handleCaptchaExpire}
                             // ref={this.recaptchaRef}
-                            />
+                            /> */}
                         <button disabled={isVerified}>Sign In</button>
                     </form>
                     <p>

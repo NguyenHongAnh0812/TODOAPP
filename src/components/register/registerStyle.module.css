@@ -39,6 +39,7 @@ section {
     justify-content: flex-start;
     padding: 1rem;
     background-color: rgba(0,0,0,0.4);
+    border-radius: 20px;
 }
 
 form {
@@ -47,6 +48,7 @@ form {
     justify-content: space-evenly;
     flex-grow: 1;
     padding-bottom: 1rem;
+    
 }
 
 a, a:visited {
@@ -80,6 +82,7 @@ button {
     padding: 0.25rem;
     position: relative;
     bottom: -10px;
+    
 }
 
 .instructions > svg {

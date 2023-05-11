@@ -19,6 +19,17 @@ function App() {
         console.log(error);
       })
   }, []);
+  useEffect(() => {
+    axios.get('https://6312bc98b466aa9b038d6e93.mockapi.io/accout')
+      .then(function (response) {
+        setAccout(response.data)
+      })
+      .catch(function (error) {
+
+        console.log(error);
+      })
+  }, []);
+  const [accout, setAccout] = useState(obj);
   const [list, setList] = useState(obj);
   const [crInput, setCrInput] = useState('');
   let Delete = (id) => {
@@ -75,7 +86,7 @@ function App() {
   return (
     <>
        <Routes >
-        <Route path ="/" element = {<Login />} />
+        <Route path ="/" element = {<Login accout={accout} />} />
         <Route path ="/register" element = {<Register />} />
         <Route path ="/homeAdmin" element = { 
         <div className='app'>

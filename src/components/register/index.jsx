@@ -2,6 +2,7 @@ import { useRef, useState, useEffect,axios } from "react";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import registerStyle from "./registerStyle.module.css"
+import CryptoJS from 'crypto-js';
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
@@ -24,6 +25,7 @@ const Register = () => {
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
+    const axios = require('axios').default;
     useEffect(() => {
         userRef.current.focus();
     }, [])
@@ -50,32 +52,26 @@ const Register = () => {
             setErrMsg("Invalid Entry");
             return;
         }
-        // try {
-        //     const response = await axios.post(REGISTER_URL,
-        //         JSON.stringify({ user, pwd }),
-        //         {
-        //             headers: { 'Content-Type': 'application/json' },
-        //             withCredentials: true
-        //         }
-        //     );
-        //     // TODO: remove console.logs before deployment
-        //     console.log(JSON.stringify(response?.data));
-        //     //console.log(JSON.stringify(response))
-        //     setSuccess(true);
-        //     //clear state and controlled inputs
-        //     setUser('');
-        //     setPwd('');
-        //     setMatchPwd('');
-        // } catch (err) {
-        //     if (!err?.response) {
-        //         setErrMsg('No Server Response');
-        //     } else if (err.response?.status === 409) {
-        //         setErrMsg('Username Taken');
-        //     } else {
-        //         setErrMsg('Registration Failed')
-        //     }
-        //     errRef.current.focus();
-        // }
+        const password = pwd;
+        const salt = 'a1b2c3d4'; // salt ngẫu nhiên
+        const pepper = 'e5f6g7h8'; // pepper bí mật
+
+        const saltedPassword = password + salt;
+        const pepperedSaltedPassword = saltedPassword + pepper;
+
+        const hash = CryptoJS.SHA256(pepperedSaltedPassword).toString();
+        axios.post('https://6312bc98b466aa9b038d6e93.mockapi.io/accout',
+        {
+          user : user,
+          password : hash,
+          role : "user"
+        }
+        )
+        alert("Đăng ký thành công")
+            setSuccess(true);
+            setUser('');
+            setPwd('');
+            setMatchPwd('');
     }
 
     return (
@@ -84,7 +80,7 @@ const Register = () => {
                 <section>
                     <h1>Success!</h1>
                     <p>
-                        <a href="#">Sign In</a>
+                        <a href="/">Sign In</a>
                     </p>
                 </section>
             ) : (
