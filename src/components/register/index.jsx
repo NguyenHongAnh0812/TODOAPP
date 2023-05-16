@@ -78,7 +78,7 @@ const Register = () => {
         onCaptchVerify();
     
         const appVerifier = window.recaptchaVerifier;
-    
+        console.log(ph)
         const formatPh = "+" + ph;
     
         signInWithPhoneNumber(auth, formatPh, appVerifier)
@@ -100,7 +100,7 @@ const Register = () => {
           .confirm(otp)
           .then(async (res) => {
             console.log(res);
-            setUser1(res.user1);
+            setUser1(res.user);
             setSuccess(true)
             const v1 = USER_REGEX.test(user);
             const v2 = PWD_REGEX.test(pwd);
@@ -120,7 +120,8 @@ const Register = () => {
             {
               user : user,
               password : hash,
-              role : "user"
+              role : "user",
+              phone : ph
             }
             )
             setLoading(false);

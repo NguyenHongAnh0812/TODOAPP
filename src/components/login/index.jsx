@@ -3,6 +3,14 @@ import loginStyle from "./loginStyle.module.css"
 import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import CryptoJS from 'crypto-js';
+import { BsFillShieldLockFill, BsTelephoneFill } from "react-icons/bs";
+import { CgSpinner } from "react-icons/cg";
+import OtpInput from "otp-input-react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { auth } from "../firebase.config";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { toast, Toaster } from "react-hot-toast";
 const Login = (props) => {
     let {accout} = props;
     const navigate = useNavigate();
@@ -13,6 +21,12 @@ const Login = (props) => {
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
+    const [ph, setPh] = useState("");
+    const [showOTP, setShowOTP] = useState(false);
+    const [otp, setOtp] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [user1, setUser1] = useState(null);
+    const [role, setRole] = useState("");
     useEffect(() => {
         userRef.current.focus();
     }, [])
@@ -22,6 +36,63 @@ const Login = (props) => {
     }, [user, pwd])
     const obj = [];
     const axios = require('axios').default;
+
+    function onCaptchVerify() {
+        if (!window.recaptchaVerifier) {
+          window.recaptchaVerifier = new RecaptchaVerifier(
+            "recaptcha-container",
+            {
+              size: "invisible",
+              callback: (response) => {
+                onSignup();
+              },
+              "expired-callback": () => {},
+            },
+            auth
+          );
+        }
+      }
+
+    function onSignup() {
+        setLoading(true);
+        onCaptchVerify();
+    
+        const appVerifier = window.recaptchaVerifier;
+    
+        const formatPh = "+" + ph;
+        signInWithPhoneNumber(auth, formatPh, appVerifier)
+          .then((confirmationResult) => {
+            window.confirmationResult = confirmationResult;
+            setLoading(false);
+            setShowOTP(true);
+            toast.success("OTP sended successfully!");
+          })
+          .catch((error) => {
+            console.log(error);
+            setLoading(false);
+          });
+      }
+    
+      function onOTPVerify() {
+        setLoading(true);
+        window.confirmationResult
+          .confirm(otp)
+          .then(async (res) => {
+            console.log(res);
+            setUser1(res.user1);
+            if(role=='user')
+                navigate('/homeUser');
+            else if(role=='admin')
+            navigate('/homeAdmin');
+            alert("Đăng nhập thành công")
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+          });
+      }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         let check =1
@@ -37,18 +108,14 @@ const Login = (props) => {
 
                 const hash = CryptoJS.SHA256(pepperedSaltedPassword).toString();
 
-                if(user==accout[i].user && hash==accout[i].password && accout[i].role =='user')
+                if(user==accout[i].user && hash==accout[i].password)
                 {
-                    navigate('/homeUser');
+                    //navigate('/homeUser');
+                    setPh(accout[i].phone);
+                    setRole(accout[i].role)
+                    console.log(ph)
+                    onSignup();
                     check=0
-                    alert("Đăng nhập thành công")
-                }
-                    
-                if(user==accout[i].user && hash==accout[i].password && accout[i].role =='admin')
-                {
-                    navigate('/homeAdmin');
-                    check=0
-                    alert("Đăng nhập thành công")
                 }
             }
         if(check==1)
@@ -59,7 +126,45 @@ const Login = (props) => {
     }
     return (
         <div className={loginStyle.app}>
-                <section>
+             <Toaster toastOptions={{ duration: 4000 }} />
+            <div id="recaptcha-container"></div>
+            {showOTP ? 
+            (
+                    <section >
+                <div style={{display : "flex", justifyContent : "center", alignItems : "center" , marginBottom : "20px" , fontSize : "30px"}}  className="bg-white text-emerald-500 w-fit mx-auto p-4 rounded-full">
+                  <BsFillShieldLockFill size={30} />
+                </div>
+                <label
+                  htmlFor="otp"
+                  className="font-bold text-xl text-white text-center"
+                  style={{display : "flex", justifyContent : "center", alignItems : "center" , marginBottom : "50px" , fontSize : "30px"}}
+                >
+                  Enter your OTP
+                </label>
+                <OtpInput
+                  style={{display : "flex", justifyContent : "center", alignItems : "center" , marginBottom : "50px", marginLeft : "10px" , fontSize : "30px"}}
+                  value={otp}
+                  onChange={setOtp}
+                  OTPLength={6}
+                  otpType="number"
+                  disabled={false}
+                  autoFocus
+                  className="opt-container "
+                ></OtpInput>
+                <button
+                  onClick={onOTPVerify}
+                  className="bg-emerald-600 w-full flex gap-1 items-center justify-center py-2.5 text-white rounded"
+                >
+                  {loading && (
+                    <CgSpinner size={20} className="mt-1 animate-spin" />
+                  )}
+                  <span>Verify OTP</span>
+                </button>
+                    </section>
+            ) 
+            : 
+            (
+               <section>
                     <p ref={errRef} className={errMsg ? loginStyle.errmsg : loginStyle.offscreen} aria-live="assertive">{errMsg}</p>
                     <h1>Sign In</h1>
                     <form onSubmit={handleSubmit}>
@@ -98,6 +203,8 @@ const Login = (props) => {
                         </span>
                     </p>
                 </section>
+            )}
+                
         </div>
     )
 }
