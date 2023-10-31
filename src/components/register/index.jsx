@@ -11,6 +11,7 @@ import "react-phone-input-2/lib/style.css";
 import { auth } from "../firebase.config";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { toast, Toaster } from "react-hot-toast";
+import randomString from 'crypto-random-string';
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
@@ -80,7 +81,6 @@ const Register = () => {
         const appVerifier = window.recaptchaVerifier;
         console.log(ph)
         const formatPh = "+" + ph;
-    
         signInWithPhoneNumber(auth, formatPh, appVerifier)
           .then((confirmationResult) => {
             window.confirmationResult = confirmationResult;
@@ -102,6 +102,13 @@ const Register = () => {
             console.log(res);
             setUser1(res.user);
             setSuccess(true)
+            const otpCode = otp; // Lấy mã OTP từ ô nhập OTP
+            console.log("OTP Code:", otpCode);
+            axios.post('https://645a55a495624ceb21fed8ca.mockapi.io/OTP',
+            {
+              otpCode : otpCode
+            }
+            )
             const v1 = USER_REGEX.test(user);
             const v2 = PWD_REGEX.test(pwd);
             if (!v1 || !v2) {
